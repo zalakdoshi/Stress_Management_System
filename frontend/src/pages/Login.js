@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api');
 
 function Login() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ function Login() {
       const response = await axios.post(`${API_URL}/login`, formData);
       localStorage.setItem('user', JSON.stringify(response.data));
       navigate('/dashboard');
-      window.location.reload();
+      window.dispatchEvent(new Event('storage'));
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
     } finally {

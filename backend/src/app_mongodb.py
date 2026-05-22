@@ -129,8 +129,20 @@ def preprocess_input(data):
                                                     'Cholesterol_Level', 'Blood_Sugar_Level',
                                                     'Wake_Up_Time', 'Bed_Time'])
     
-    # Create DataFrame from input
-    df = pd.DataFrame([data])
+    # Remove non-feature fields before creating DataFrame
+    feature_fields = set(cat_cols + numeric_cols + ['Wake_Up_Time', 'Bed_Time', 'Stress_Detection'])
+    clean_data = {k: v for k, v in data.items() if k in feature_fields}
+    
+    # Convert numeric string values to float
+    for col in numeric_cols:
+        if col in clean_data and isinstance(clean_data[col], str):
+            try:
+                clean_data[col] = float(clean_data[col])
+            except (ValueError, TypeError):
+                pass
+    
+    # Create DataFrame from cleaned input
+    df = pd.DataFrame([clean_data])
     
     # Convert time columns to minutes
     time_cols = ['Wake_Up_Time', 'Bed_Time']
@@ -237,13 +249,16 @@ def predict_stress():
         probabilities = None
         if hasattr(model_data['model'], 'predict_proba'):
             proba = model_data['model'].predict_proba(processed_input)[0]
-            probabilities = {
-                'High': round(proba[0] * 100, 2),
-                'Low': round(proba[1] * 100, 2),
-                'Medium': round(proba[2] * 100, 2)
-            }
+            inverse_mapping = model_data.get('inverse_mapping', {1: 'Low', 2: 'Medium', 3: 'High'})
+            classes = model_data['model'].classes_
+            probabilities = {}
+            for i, cls in enumerate(classes):
+                label = inverse_mapping.get(cls, str(cls))
+                probabilities[label] = round(proba[i] * 100, 2)
         
-        stress_level = model_data['label_encoders']['Stress_Detection'].inverse_transform([prediction])[0]
+        # Map numeric prediction to stress level label
+        inverse_mapping = model_data.get('inverse_mapping', {1: 'Low', 2: 'Medium', 3: 'High'})
+        stress_level = inverse_mapping.get(prediction, 'Medium')
         
         # Save to MongoDB
         if user_id:

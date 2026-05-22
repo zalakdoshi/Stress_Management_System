@@ -1,0 +1,15 @@
+# Vercel Ignore File
+# Ignore local development directories and unused heavy files
+
+.venv
+node_modules
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+stress_management_sys.zip
