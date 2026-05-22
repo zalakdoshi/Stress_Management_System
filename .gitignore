@@ -1,0 +1,19 @@
+# Root Git Ignore
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.zip
+*.log
+update_api_urls.py
+build/
+dist/
+.vercel/
