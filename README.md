@@ -10,6 +10,8 @@
 
 **A comprehensive AI-powered web application for detecting, analyzing, and managing stress levels using Machine Learning and Generative AI.**
 
+🔗 **Live Demo:** [https://stressss-management-system.vercel.app](https://stressss-management-system.vercel.app)
+
 [Features](#features) • [Installation](#installation) • [Tech Stack](#tech-stack) • [API Reference](#api-endpoints)
 
 </div>
