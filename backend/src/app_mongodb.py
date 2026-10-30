@@ -39,22 +39,12 @@ app = Flask(__name__)
 CORS(app)
 
 # ============================================
-# MONGODB CONNECTION - PUT YOUR URL HERE!
+# MONGODB CONNECTION - FROM ENVIRONMENT VARIABLES
 # ============================================
 
-# ⬇️⬇️⬇️ CHANGE THIS LINE WITH YOUR MONGODB URL ⬇️⬇️⬇️
-
-# Option 1: Local MongoDB (if MongoDB is installed locally)
-# MONGO_URI = "mongodb://localhost:27017/"
-
-# Option 2: MongoDB Atlas (Cloud) - RECOMMENDED
-# Replace with your connection string from MongoDB Atlas:
-MONGO_URI = "mongodb+srv://zalakdoshi:zalakdoshi@cluster0.ghwqzyz.mongodb.net/"
-
-# Example:
-# MONGO_URI = "mongodb+srv://zalak:mypassword123@cluster0.abc123.mongodb.net/"
-
-# ⬆️⬆️⬆️ CHANGE THE ABOVE LINE ⬆️⬆️⬆️
+# Load MongoDB URI from environment variables
+# Set MONGODB_URI in .env file or system environment
+MONGO_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
 
 # Connect to MongoDB
 try:
@@ -596,8 +586,8 @@ def before_after_report(user_id):
 # CHATBOT ENDPOINT (Dynamic AI-Powered)
 # ============================================
 
-# Gemini API Key
-GEMINI_API_KEY = "AIzaSyAg5ZsWY9U-q80YnSujad26Iq81s5KE_Jg"
+# Gemini API Key - Load from environment variables
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 gemini_model = None
 
@@ -608,7 +598,7 @@ def init_gemini():
         print("⚠ Gemini library not available - using fallback responses")
         return False
     
-    if GEMINI_API_KEY and GEMINI_API_KEY != "YOUR_GEMINI_API_KEY_HERE":
+    if GEMINI_API_KEY:
         try:
             genai.configure(api_key=GEMINI_API_KEY)
             gemini_model = genai.GenerativeModel('gemini-2.5-flash')
@@ -621,7 +611,7 @@ def init_gemini():
             print(f"✗ Gemini AI initialization failed: {e}")
             return False
     else:
-        print("⚠ Gemini API key not set")
+        print("⚠ Gemini API key not set. Set GEMINI_API_KEY environment variable to enable AI-powered chat.")
     return False
 
 # Try to initialize Gemini on startup
